@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+  k3nphotos:
+    image: k3nboars
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      - MONGO_HOST=mongodb://mongodb/
+      - MONGO_PORT=27017
+    depends_on:
+      - mongodb
+    ports:
+      - "0.0.0.0:84944:84944"
+    links:
+      - mongodb:mongo
+    volumes:
+      - /app/boars_photos
+
+  mongodb:
+    image: mongo:4.4.7-focal
+    volumes:
+      - mongo:/data/db
+
+
+volumes:
+  mongo:
+
+
