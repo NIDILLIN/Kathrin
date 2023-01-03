@@ -3,17 +3,24 @@ import datetime
 from pydantic import BaseModel
 
 
+class Wct(BaseModel):
+    id: str
+    given_date: datetime.date
+
+
 class User(BaseModel):
-    id: int
+    syncId: int
     username: str
     registration_date: datetime.date
+    wct: Wct | None = None
+    is_admin: bool = False
+    premium: bool = False
+    opened_boars: list[str] | None = None
+    jokes: list[str] | None = None
+    photos: list[str] | None = None
 
 
-class Boar(BaseModel):
-    # id: str
-    name: str
-    category: str
-    premium: bool
-    rare: str
-    created_date: datetime.date
-    created_by: User
+class NewUser(BaseModel):
+    syncId: int
+    username: str
+    registration_date: datetime.date

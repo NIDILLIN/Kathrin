@@ -2,7 +2,7 @@ from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from config import settings
-from models import Boar
+from models import NewUser, User, Wct
 
 
 class DB:
@@ -24,7 +24,7 @@ class DB:
 
         result = []
         async for document in cursor:
-            document['id'] = str(document.pop('_id'))
+            document.pop('_id')
             result.append(document)
 
         return count, result
@@ -33,24 +33,46 @@ class DB:
         cursor = self.collection.aggregate([{ '$sample': { 'size': 1 } }])
         documents = await cursor.to_list(length=None)
         document = documents[0]
-        document['id'] = str(document.pop('_id'))
+        document.pop('_id')
         return document
 
-    async def find(self, id: str):
-        document = await self.collection.find_one({'_id': ObjectId(id)})
-        document['id'] = str(document.pop('_id'))
+    async def find(self, syncId: str):
+        document = await self.collection.find_one({'syncId': syncId})
+        document.pop('_id')
         return document
 
-    async def save_document(self, boar: Boar) -> str:
-        document = boar.dict()
-        document['created_date'] = document['created_date'].isoformat()
-        document['created_by']['registration_date'] = document['created_by']['registration_date'].isoformat()
+    async def create_user(self, user: NewUser) -> str:
+        document = User(
+            syncId=user.syncId,
+            username=user.username,
+            registration_date=user.registration_date
+        ).dict()
+
+        document['registration_date'] = document['registration_date'].isoformat()
         
         r = await self.collection.insert_one(
             document
         )
-        id = str(r.inserted_id)
-        return id
+        return document['syncId']
+
+    async def get_user_wct(self, syncId: int) -> dict:
+        document = await self.collection.find_one({'syncId': syncId})
+        wct = document.get('wct')
+        return wct
+
+    async def update_user_wct(self, syncId: int, wct: Wct):
+        wct = wct.dict()
+        wct['given_date'] = wct['given_date'].isoformat()
+
+        await self.collection.find_one_and_update(
+            {'syncId': syncId}, 
+            {'$set': {
+                'wct': wct
+            }}
+        )
+
+    async def save_avatar(self, syncId: int):
+        ...
 
 
 

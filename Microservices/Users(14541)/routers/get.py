@@ -7,39 +7,43 @@ from db import db
 router = APIRouter()
 
 
-@router.get('/boars')
-async def get_boars_with_params(*, skip: int, limit: int):
-    _, result = await db.get_documents(skip=skip, limit=limit)
-    return result
-
-
-@router.get('/boars/')
-async def get_all_boars():
+@router.get('/')
+async def get_all_users():
     count, result = await db.get_documents(skip=0, limit=10)
     return {
         'count': count,
-        'boars': result
+        'users': result
     }
 
+
+@router.get('/filter/')
+async def get_users_with_params(*, skip: int, limit: int):
+    _, result = await db.get_documents(skip=skip, limit=limit)
+    return result
+
     
-@router.get('/boars/random', response_model=str)
-async def get_random_boar():
+@router.get('/random')
+async def get_random_user():
     result = await db.random_document()
     return result
 
 
-@router.get('/boar/{boar_id}')
-async def get_boar(boar_id: str):
-    boar = await db.find(boar_id)
-    return {
-        'status': 'OK',
-        'result': boar
-    }
+@router.get('/{syncId}')
+async def get_user(syncId: int):
+    user = await db.find(syncId)
+    return user
 
 
-@router.get('/boar/file/{boar_path}')
-async def get_file(photo_path: str):
-    return FileResponse(path=f'photos/{photo_path}')
+@router.get('/{syncId}/wct')
+async def get_user(syncId: int):
+    wct = await db.get_user_wct(syncId)
+    return wct
+
+
+@router.get('/{syncId}/avatar')
+async def get_avatar(syncId: int):
+    photo_path = await db.get_user_avatar(syncId)
+    return FileResponse(path=f'avatars/{photo_path}')
 
 
 
