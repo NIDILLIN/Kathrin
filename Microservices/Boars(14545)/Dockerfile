@@ -1,7 +1,7 @@
 # For more information, please refer to https://aka.ms/vscode-docker-python
 FROM python:3.9-slim
 
-EXPOSE 84944
+EXPOSE 14545
 
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -24,4 +24,4 @@ RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /
 USER appuser
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-CMD ["uvicorn", "--port", "84944", "--host", "0.0.0.0", "main:app"]
+CMD ["uvicorn", "--port", "14545", "--host", "0.0.0.0", "main:app"]

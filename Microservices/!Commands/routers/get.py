@@ -13,18 +13,18 @@ router = APIRouter()
 @router.get('/wct')
 async def get_wct_info(syncId: int):
     session = get_session()
-    async with session.get(f'http://users/{syncId}/wct/') as resp:
+    async with session.get(f'http://users:14541/{syncId}/wct/') as resp:
         boar_info = await resp.json()
 
     today = datetime.date.today().isoformat()
 
     if today != boar_info.get('given_date'):
-        async with session.get(f'http://boars/random') as resp:
+        async with session.get(f'http://boars:14545/random') as resp:
             boar = await resp.json()
         await update_user_boar(syncId, boar)
     else:
         boar_id = boar_info['id']
-        async with session.get(f'http://boars/{boar_id}') as resp:
+        async with session.get(f'http://boars:14545/{boar_id}') as resp:
             boar = await resp.json()
 
     return boar
@@ -38,7 +38,7 @@ async def update_user_boar(syncId: int, boar):
             'given_date': today
         }
     async with session as s:
-        await s.put(f'http://users/{syncId}/wct', data=r)
+        await s.put(f'http://users:14541/{syncId}/wct', data=r)
 
 
 @router.get('/photo')

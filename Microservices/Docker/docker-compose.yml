@@ -1,0 +1,66 @@
+version: '3.4'
+
+services:
+  boars:
+    image: boars
+    build:
+      context: ../Boars(14545)
+      dockerfile: ./Dockerfile
+    environment:
+      - MONGO_HOST=mongodb://mongodb/
+      - MONGO_PORT=27017
+    depends_on:
+      - mongodb
+    ports:
+      - "0.0.0.0:14545:14545"
+    links:
+      - mongodb:mongo
+    volumes:
+      - /app/boars_photos
+
+  users:
+    image: users
+    build:
+      context: ../Users(14541)
+      dockerfile: ./Dockerfile
+    environment:
+      - MONGO_HOST=mongodb://mongodb/
+      - MONGO_PORT=27017
+    depends_on:
+      - mongodb
+    ports:
+      - "0.0.0.0:14541:14541"
+    links:
+      - mongodb:mongo
+    volumes:
+      - /app/avatars
+
+  commands:
+    image: commands
+    build:
+      context: ../!Commands
+      dockerfile: ./Dockerfile
+    environment:
+      - MONGO_HOST=mongodb://mongodb/
+      - MONGO_PORT=27017
+    depends_on:
+      - mongodb
+      - boars
+      - users
+    ports:
+      - "0.0.0.0:14549:14549"
+    links:
+      - mongodb:mongo
+      - users:users
+      - boars:boars
+
+  mongodb:
+    image: mongo:4.4.7-focal
+    volumes:
+      - mongo:/data/db
+    
+
+
+volumes:
+  mongo:
+
