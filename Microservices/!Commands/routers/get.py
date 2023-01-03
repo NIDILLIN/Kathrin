@@ -1,3 +1,4 @@
+import datetime
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
 
@@ -12,10 +13,32 @@ router = APIRouter()
 @router.get('/wct')
 async def get_wct_info(syncId: int):
     session = get_session()
-    async with session:
-        boar_info = await session.get(f'users/{syncId}/wct/')
+    async with session.get(f'http://users/{syncId}/wct/') as resp:
+        boar_info = await resp.json()
 
-    return boar_info
+    today = datetime.date.today().isoformat()
+
+    if today != boar_info.get('given_date'):
+        async with session.get(f'http://boars/random') as resp:
+            boar = await resp.json()
+        await update_user_boar(syncId, boar)
+    else:
+        boar_id = boar_info['id']
+        async with session.get(f'http://boars/{boar_id}') as resp:
+            boar = await resp.json()
+
+    return boar
+
+
+async def update_user_boar(syncId: int, boar):
+    session = get_session()
+    today = datetime.date.today().isoformat()
+    r = {
+            'id': boar['id'],
+            'given_date': today
+        }
+    async with session as s:
+        await s.put(f'http://users/{syncId}/wct', data=r)
 
 
 @router.get('/photo')
@@ -36,23 +59,13 @@ async def get_joke():
     return resp
 
 
-@router.get('/auth')
-async def get_photos_with_params():
-    ...
-
-
 @router.get('/boars')
 async def get_user_boars(syncId: int):
     session = get_session()
     async with session:
-        resp = await session.get(f'users/{syncId}/boars/')
+        resp = await session.get(f'achievements/{syncId}/boars/')
 
     return resp
-
-
-@router.get('/help')
-async def get_photos_with_params():
-    ...
 
 
 @router.get('/userstatus')
