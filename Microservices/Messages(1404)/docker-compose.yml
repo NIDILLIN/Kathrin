@@ -1,8 +1,8 @@
 version: '3.4'
 
 services:
-  k3nphotos:
-    image: k3njokes
+  messages:
+    image: K3nMessages
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -12,7 +12,7 @@ services:
     depends_on:
       - mongodb
     ports:
-      - "0.0.0.0:54347:54347"
+      - "0.0.0.0:1404:1404"
     links:
       - mongodb:mongo
 

@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  chatbot:
+    image: K3nChatBot
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      - API_KEY=apikey
+    ports:
+      - "0.0.0.0:1402:1402"
+
+

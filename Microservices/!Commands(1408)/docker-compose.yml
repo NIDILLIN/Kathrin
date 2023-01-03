@@ -1,8 +1,8 @@
 version: '3.4'
 
 services:
-  k3nphotos:
-    image: k3nboars
+  commands:
+    image: K3nCommands
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -12,11 +12,9 @@ services:
     depends_on:
       - mongodb
     ports:
-      - "0.0.0.0:84944:84944"
+      - "0.0.0.0:1408:1408"
     links:
       - mongodb:mongo
-    volumes:
-      - /app/boars_photos
 
   mongodb:
     image: mongo:4.4.7-focal
