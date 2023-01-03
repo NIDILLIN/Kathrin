@@ -9,8 +9,8 @@ from models import User
 router = APIRouter()
 
 
-@router.get("/uuid", response_model=User)
-async def get_uuid():
+@router.get("/newuser", response_model=User)
+async def new_user():
     date = datetime.datetime.now()
     id = gen_uuid()
     token = gen_token()
