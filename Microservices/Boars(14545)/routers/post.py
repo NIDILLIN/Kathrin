@@ -7,7 +7,7 @@ from models import Boar, Category
 router = APIRouter()
 
 
-@router.post("/boars/")
+@router.post("/new")
 async def create_boar(boar: Boar):
     id = await db.save_document(boar)
     return {
@@ -16,7 +16,7 @@ async def create_boar(boar: Boar):
     }
 
 
-@router.post("/boars/{boar_id}/file")
+@router.post("/{boar_id}/file")
 async def create_upload_file(boar_id: str, file: UploadFile):
     id = await save_file(boar_id, file)
     return {
@@ -33,7 +33,7 @@ async def save_file(boar_id: str, file: UploadFile):
     return boar_id
 
 
-@router.post('/categories')
+@router.post('/categories/new')
 async def create_category(category: Category):
     await db.save_category(category)
     return {
