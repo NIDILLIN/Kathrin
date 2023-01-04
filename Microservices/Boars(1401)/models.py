@@ -21,4 +21,4 @@ class Boar(BaseModel):
 
 class Category(BaseModel):
     category: str
-    created_date: datetime.date
+    created_at: datetime.date

@@ -1,12 +1,9 @@
-import aiohttp
 import datetime
-
-from typing import Union
 
 from fastapi import APIRouter
 
 from config import settings
-
+from session import get_session
 from models import NewUser
 
 

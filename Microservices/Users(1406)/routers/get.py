@@ -16,7 +16,7 @@ async def get_all_users():
     }
 
 
-@router.get('/filter/')
+@router.get('/filter')
 async def get_users_with_params(*, skip: int, limit: int):
     _, result = await db.get_documents(skip=skip, limit=limit)
     return result
@@ -35,7 +35,7 @@ async def get_user(syncId: int):
 
 
 @router.get('/{syncId}/wct')
-async def get_user(syncId: int):
+async def get_user_wct(syncId: int):
     wct = await db.get_user_wct(syncId)
     return wct
 

@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class Message(BaseModel):
+class ChatGPTMessage(BaseModel):
     model: str
     prompt: str
     temperature: float

@@ -17,7 +17,7 @@ async def create_user_avatar(syncId: int, file: UploadFile):
     }
 
 
-@router.post("/new_user")
+@router.post("/create_user")
 async def create_new_user(newUser: NewUser):
     user = await db.create_user(newUser)
     return user

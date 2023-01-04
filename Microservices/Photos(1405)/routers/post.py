@@ -7,7 +7,7 @@ from db import db
 router = APIRouter()
 
 
-@router.post("/photos/")
+@router.post("/create_photo")
 async def create_upload_file(file: UploadFile):
     id = await save_file(file)
     return {"filename": id+'.png'}

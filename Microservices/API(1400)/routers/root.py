@@ -1,30 +1,31 @@
-import aiohttp
-
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import RedirectResponse
 
 from config import settings
-
 from models import NewUser
-
+from session import get_session
 
 router = APIRouter()
 
 
 @router.get('/')
 async def get_root():
-    return RedirectResponse(settings.self_url+'redoc/')
+    return RedirectResponse(settings.api+'docs/')
 
 
-@router.get("/createUser", response_model=NewUser)
+@router.post("/create_user", response_model=NewUser)
 async def get_uuid(*, username: str):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(settings.api_url) as resp:
-            r = await resp.json()
+    session = get_session()
+    async with session.post(
+        settings.users+settings.Methods.Users.Post.create_user, 
+        data={'username': username}) as resp:
+
+        r = await resp.json()
 
     return NewUser(
         user_id=r['user_id'],
         username=username,
         token=r['token'],
-        signedAt=r['date']
+        registration_date=r['date']
     )
+
