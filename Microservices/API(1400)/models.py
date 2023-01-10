@@ -1,8 +1,15 @@
 import datetime
+from typing import Union
 from pydantic import BaseModel
 
+
+class External(BaseModel):
+    type: str
+    id: int
+
+
 class Wct(BaseModel):
-    id: str
+    boar_id: str
     given_date: datetime.date
 
 
@@ -15,13 +22,14 @@ class NewUser(BaseModel):
 class User(BaseModel):
     syncId: int
     username: str
+    # space: str
     registration_date: datetime.date
-    wct: Wct | None = None
+    wct: Union[ Wct, None] = None
     is_admin: bool = False
     premium: bool = False
-    opened_boars: list[str] | None = None
-    jokes: list[str] | None = None
-    photos: list[str] | None = None
+    opened_boars: Union[list[str], None] = None
+    jokes: Union[list[str], None] = None
+    photos: Union[list[str], None] = None
 
 
 class UploadUser(BaseModel):
@@ -31,21 +39,21 @@ class UploadUser(BaseModel):
 
 class Photo(BaseModel):
     id: str
-    name: str
+    filename: str
     created_at: datetime.date
     uploaded_by: UploadUser
 
 
+class UploadJoke(BaseModel):
+    text: str
+    uploaded_by: UploadUser
+
+
 class Joke(BaseModel):
-    joke: str
-    created_by: UploadUser
-
-
-class JokePackage(BaseModel):
     id: str
-    joke: str
+    text: str
     created_at: datetime.date
-    created_by: UploadUser
+    uploaded_by: UploadUser
 
 
 class ChatGPTMessage(BaseModel):
@@ -59,7 +67,7 @@ class ChatGPTMessage(BaseModel):
 
 
 class Boar(BaseModel):
-    # id: str
+    id: str
     name: str
     category: str
     premium: bool
@@ -68,6 +76,19 @@ class Boar(BaseModel):
     created_by: User
 
 
-class Category(BaseModel):
+class UploadBoar(BaseModel):
+    name: str
     category: str
+    premium: bool
+    rare: str
+    created_by: UploadUser
+
+
+class UploadCategory(BaseModel):
+    name: str
+
+
+class Category(BaseModel):
+    id: str
+    name: str
     created_at: datetime.date

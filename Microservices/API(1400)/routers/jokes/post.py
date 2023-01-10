@@ -1,20 +1,34 @@
+import aiohttp
 from fastapi import APIRouter
 
-from models import JokePackage, Joke
+from models import UploadJoke, Joke
 from config import settings
-from session import get_session
 
 
 router = APIRouter()
 
 
-@router.post("/jokes/create_joke", response_model=JokePackage)
-async def create_joke(jokePackage: Joke):
-    session = get_session()
-    async with session.get(
-        settings.jokes+settings.Methods.Jokes.Post.create_joke) as resp:
-
-        r = await resp.json()
+@router.post("/jokes/create_joke", response_model=Joke)
+async def create_joke(joke: UploadJoke):
+    """
+    {
+        'status': 'OK',
+        'result': {
+            'id': str
+            'text': str,
+            'created_at': datetime.date (YYYY-MM-DD),
+            'uploaded_by': {
+                'syncId': int,
+                'username': str
+        }
+    }
+    """
+    async with aiohttp.ClientSession() as session:
+        async with session.post(
+            settings.jokes+settings.Methods.Jokes.Post.create_joke,
+            json=joke.dict()
+        ) as resp:
+            r = await resp.json()
 
     return r
 

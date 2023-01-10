@@ -1,52 +1,95 @@
+import aiohttp
 from fastapi import APIRouter
 
 from config import settings
-from session import get_session
-
+from models import Joke
 
 router = APIRouter()
 
 
 @router.get('/jokes')
 async def get_all_jokes():
-    session = get_session()
-    async with session.get(
-        settings.jokes+settings.Methods.Jokes.Get.jokes) as resp:
-
-        r = await resp.json()
+    """
+    {
+        'status': 'OK',
+        'result': {
+            'count': int,
+            'jokes': list[Joke]
+        }
+    }
+    """
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            settings.jokes+settings.Methods.Jokes.Get.joke
+        ) as resp:
+            r = await resp.json()
 
     return r
 
 
-@router.get('/jokes/filter', response_model=list[str])
+@router.get('/jokes/filter')
 async def get_jokes_with_params(*, skip: int, limit: int):
-    session = get_session()
-    async with session.get(
-        settings.jokes+settings.Methods.Jokes.Get.filter) as resp:
-
-        r = await resp.json()
+    """
+    {
+        'status': 'OK',
+        'result': list[Joke]
+    }
+    """
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            settings.jokes+settings.Methods.Jokes.Get.filter(skip=skip, limit=limit)
+        ) as resp:
+            r = await resp.json()
 
     return r
 
 
-@router.get('/jokes/random')
+@router.get('/jokes/random', response_model=Joke)
 async def get_random_joke():
-    session = get_session()
-    async with session.get(
-        settings.jokes+settings.Methods.Jokes.Get.random) as resp:
-
-        r = await resp.json()
+    """
+    {
+        'status': 'OK',
+        'result': {
+            'id': str
+            'text': str,
+            'created_at': datetime.date (YYYY-MM-DD),
+            'uploaded_by': {
+                'syncId': int,
+                'username': str
+            }
+        }
+    }
+    """
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            settings.jokes+settings.Methods.Jokes.Get.random
+        ) as resp:
+            r = await resp.json()
 
     return r
 
 
-@router.get('/jokes/{joke_id}')
+@router.get('/jokes/{joke_id}', response_model=Joke)
 async def get_joke_by_id(joke_id: str):
-    session = get_session()
-    async with session.get(
-        settings.jokes+settings.Methods.Jokes.Get.joke(joke_id=joke_id)) as resp:
-
-        r = await resp.json()
+    """
+    {
+        'status': 'OK',
+        'result': {
+            'id': str
+            'text': str,
+            'created_at': datetime.date (YYYY-MM-DD),
+            'uploaded_by': {
+                'syncId': int,
+                'username': str
+            }
+        }
+    }
+    """
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            settings.jokes+settings.Methods.Jokes.Get.joke(joke_id=joke_id)
+        ) as resp:
+            r = await resp.json()
 
     return r
 

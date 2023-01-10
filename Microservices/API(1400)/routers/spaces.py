@@ -1,5 +1,5 @@
 import datetime
-
+from typing import Union
 from fastapi import APIRouter
 
 from config import settings

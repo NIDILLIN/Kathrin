@@ -55,6 +55,7 @@ class Settings(BaseSettings):
             
             class Post:
                 create_photo = 'create_photo'
+                upload_photo = Urn('{photo_id}/file')
 
         class Jokes:
             class Get:
@@ -78,6 +79,7 @@ class Settings(BaseSettings):
                 boar = Urn('{boar_id}')
                 file = Urn('{boar_id}/file')
                 categories = 'categories'
+                category = Urn('categories/{category_id}')
 
             class Post:
                 create_boar = 'create_boar'
@@ -86,11 +88,16 @@ class Settings(BaseSettings):
 
         class Commands:
             class Get:
-                wct = 'wct'
+                wct = Urn('wct?syncId={syncId}')
                 photo = 'photo'
                 joke = 'joke'
-                boars = 'boars'
+                boars = Urn('boars?syncId={syncId}')
                 user_status = 'userstatus'
+
+        class Auth:
+            class Get:
+                new_user = 'new_user'
+                match = Urn('match_user?external_id={external_id}')
 
 
     class Config:
