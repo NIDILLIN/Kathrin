@@ -1,0 +1,99 @@
+version: '3.4'
+
+services:
+  boars:
+    image: k3nboars
+    build:
+      context: ../Boars(1401)
+      dockerfile: ./Dockerfile
+    environment:
+      - MONGO_HOST=mongodb://mongodb/
+      - MONGO_PORT=27017
+    depends_on:
+      - mongodb
+    ports:
+      - "0.0.0.0:1401:1401"
+    links:
+      - mongodb:mongo
+    volumes:
+      - /app/boars_photos
+
+  users:
+    image: k3nusers
+    build:
+      context: ../Users(1406)
+      dockerfile: ./Dockerfile
+    environment:
+      - MONGO_HOST=mongodb://mongodb/
+      - MONGO_PORT=27017
+    depends_on:
+      - mongodb
+    ports:
+      - "0.0.0.0:1406:1406"
+    links:
+      - mongodb:mongo
+    volumes:
+      - /app/avatars
+
+  authserver:
+    image: k3nauthserver
+    build:
+      context: ../AuthServer(1410)
+      dockerfile: ./Dockerfile
+    environment:
+      - MONGO_HOST=mongodb://mongodb/
+      - MONGO_PORT=27017
+    depends_on:
+      - mongodb
+    ports:
+      - "0.0.0.0:1410:1410"
+    links:
+      - mongodb:mongo
+
+  commands:
+    image: k3ncommands
+    build:
+      context: ../Commands(1408)
+      dockerfile: ./Dockerfile
+    environment:
+      - MONGO_HOST=mongodb://mongodb/
+      - MONGO_PORT=27017
+    depends_on:
+      - mongodb
+      - boars
+      - users
+    ports:
+      - "0.0.0.0:1408:1408"
+    links:
+      - mongodb:mongo
+      - users:users
+      - boars:boars
+
+  api:
+    image: k3napi
+    build:
+      context: ../API(1400)
+      dockerfile: ./Dockerfile
+    depends_on:
+      - commands
+      - boars
+      - users
+      - authserver
+    ports:
+      - "0.0.0.0:1400:1400"
+    links:
+      - mongodb:mongo
+      - commands:commands
+      - users:users
+      - boars:boars 
+      - authserver:authserver
+
+  mongodb:
+    image: mongo:4.4.7-focal
+    volumes:
+      - mongo:/data/db
+    
+
+
+volumes:
+  mongo:
