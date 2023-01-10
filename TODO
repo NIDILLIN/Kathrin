@@ -1,3 +1,8 @@
 1. Make a python or something script setuping all in one docker image for the first step
 2. Add documentation
 3. Add schema
+
+
+Create user by username
+check username 
+check also external_id
