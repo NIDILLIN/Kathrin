@@ -48,12 +48,13 @@ class DB:
             registration_date=user.registration_date
         ).dict()
 
-        document['registration_date'] = document['registration_date'].isoformat()
+        document['registration_date'] = document['registration_date'].strftime('%Y-%m-%d')
         
         r = await self.collection.insert_one(
             document
         )
-        return document['syncId']
+        document.pop('_id')
+        return document
 
     async def get_user_wct(self, syncId: int) -> dict:
         document = await self.collection.find_one({'syncId': syncId})

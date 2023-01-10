@@ -13,7 +13,7 @@ async def create_user_avatar(syncId: int, file: UploadFile):
     await db.save_avatar(syncId)
     return {
         'status': 'OK',
-        "filename": id+'.png'
+        "result": id+'.png'
     }
 
 
