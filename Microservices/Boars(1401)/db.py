@@ -1,8 +1,9 @@
+import datetime
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from config import settings
-from models import Boar, Category
+from models import Boar, Category, UploadBoar, UploadCategory
 
 
 class DB:
@@ -30,24 +31,14 @@ class DB:
 
         return count, result
 
-    async def get_categories(self):
-        cursor = self.categories.find()
-
-        count = await self.categories.count_documents({})
-
-        result = []
-        async for document in cursor:
-            document.pop('_id')
-            result.append(document)
-
-        return count, result
-
-    async def save_category(self, category: Category):
+    async def save_category(self, category: UploadCategory):
         document = category.dict()
-        document['created_date'] = document['created_date'].isoformat()
+        document['created_at'] = datetime.date.today().strftime('%Y-%m-%d')
         r = await self.categories.insert_one(
             document
         )
+        document['id'] = str(document.pop('_id'))
+        return document
 
     async def random_document(self):
         cursor = self.boars.aggregate([{ '$sample': { 'size': 1 } }])
@@ -61,16 +52,15 @@ class DB:
         document['id'] = str(document.pop('_id'))
         return document
 
-    async def save_document(self, boar: Boar) -> str:
+    async def save_document(self, boar: UploadBoar) -> str:
         document = boar.dict()
-        document['created_date'] = document['created_date'].isoformat()
-        document['created_by']['registration_date'] = document['created_by']['registration_date'].isoformat()
+        document['created_at'] = datetime.date.today().strftime('%Y-%m-%d')
         
         r = await self.boars.insert_one(
             document
         )
-        id = str(r.inserted_id)
-        return id
+        document['id'] = str(document.pop('_id'))
+        return document
 
 
 

@@ -3,22 +3,34 @@ import datetime
 from pydantic import BaseModel
 
 
-class User(BaseModel):
-    id: int
+class UploadUser(BaseModel):
+    syncId: int
     username: str
-    registration_date: datetime.date
 
 
 class Boar(BaseModel):
-    # id: str
+    id: str
     name: str
     category: str
     premium: bool
     rare: str
-    created_date: datetime.date
-    created_by: User
+    created_at: datetime.date
+    created_by: UploadUser
+
+
+class UploadBoar(BaseModel):
+    name: str
+    category: str
+    premium: bool
+    rare: str
+    created_by: UploadUser
+
+
+class UploadCategory(BaseModel):
+    name: str
 
 
 class Category(BaseModel):
-    category: str
+    id: str
+    name: str
     created_at: datetime.date

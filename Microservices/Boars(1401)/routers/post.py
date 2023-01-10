@@ -2,26 +2,27 @@ import aiofiles
 from fastapi import APIRouter, UploadFile
 
 from db import db
-from models import Boar, Category
+from models import UploadBoar, UploadCategory, Boar
 
 router = APIRouter()
 
 
 @router.post("/create_boar")
-async def create_boar(boar: Boar):
-    id = await db.save_document(boar)
+async def create_boar(uploadBoar: UploadBoar):
+    boar = await db.save_document(uploadBoar)
     return {
         'status': 'OK',
-        'id': id
+        'result': boar
     }
 
 
 @router.post("/{boar_id}/file")
 async def create_upload_file(boar_id: str, file: UploadFile):
     id = await save_file(boar_id, file)
+    filename = id+'.png'
     return {
         'status': 'OK',
-        "filename": id+'.png'
+        'filename': filename
     }
 
 
@@ -34,8 +35,9 @@ async def save_file(boar_id: str, file: UploadFile):
 
 
 @router.post('/categories/create')
-async def create_category(category: Category):
-    await db.save_category(category)
+async def create_category(uploadCategory: UploadCategory):
+    category = await db.save_category(uploadCategory)
     return {
-        'status': 'OK'
+        'status': 'OK',
+        'result': category
     }
