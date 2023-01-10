@@ -3,13 +3,18 @@ import datetime
 from pydantic import BaseModel
 
 
-class User(BaseModel):
-    id: int
+class UploadUser(BaseModel):
+    syncId: int
     username: str
+
+
+class UploadPhoto(BaseModel):
+    name: str
+    uploaded_by: UploadUser
 
 
 class Photo(BaseModel):
     id: str
-    name: str
+    filename: str
     created_at: datetime.date
-    uploaded_by: User
+    uploaded_by: UploadUser

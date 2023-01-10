@@ -17,15 +17,21 @@ async def get_photos_with_params(*, skip: int, limit: int):
 async def get_all_photos():
     count, result = await db.get_photos(skip=0, limit=10)
     return {
-        'count': count,
-        'photos': result
+        'status': 'OK',
+        'result': {
+            'count': count,
+            'photos': result
+        }
     }
 
     
 @router.get('/random')
 async def get_random_photo():
     result = await db.random_photo()
-    return result
+    return {
+        'status': 'OK',
+        'result': result
+    }
 
 
 @router.get('/{photo_path}')
