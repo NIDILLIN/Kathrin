@@ -1,36 +1,48 @@
 from fastapi import APIRouter
 
 from db import db
-
+from models import Joke
 
 router = APIRouter()
 
 
-@router.get('/filter', response_model=list[str])
+@router.get('/filter')
 async def get_jokes_with_params(*, skip: int, limit: int):
     _, result = await db.get_documents(skip=skip, limit=limit)
-    return result
+    return {
+        'status': 'OK',
+        'result': result
+    }
 
 
 @router.get('/')
 async def get_all_jokes():
     count, result = await db.get_documents(skip=0, limit=10)
     return {
-        'count': count,
-        'jokes': result
+        'status': 'OK',
+        'result': {
+            'count': count,
+            'jokes': result
+        }
     }
 
 
-@router.get('/random')
+@router.get('/random', response_model=Joke)
 async def get_random_joke():
     result = await db.random_document()
-    return result
+    return {
+        'status': 'OK',
+        'result': result
+    }
 
 
-@router.get('/{joke_id}')
+@router.get('/{joke_id}', response_model=Joke)
 async def get_joke_by_id(joke_id: str):
-    jokePackage = await db.find(joke_id)
-    return jokePackage
+    result = await db.find(joke_id)
+    return {
+        'status': 'OK',
+        'result': result
+    }
 
 
 

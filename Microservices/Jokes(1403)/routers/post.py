@@ -1,28 +1,15 @@
 from fastapi import APIRouter
 
-from models import JokePackage
+from models import UploadJoke, Joke
 from db import db
 
 
 router = APIRouter()
 
 
-@router.post("/create_joke")
-async def create_joke(jokePackage: JokePackage):
-    """ Example JSON POST to create joke record at DataBase
-    {
-        'joke': 'string'
-        'date': '2022-12-30
-        'uploaded_by': {
-            'id': 16231246,
-            'username': 'username',
-        }
-}
-    """
-    id = await db.save_document(jokePackage)
-    return {
-        'status': 'OK',
-        'joke_id': id
-    }
+@router.post("/create_joke", response_model=Joke)
+async def create_joke(uploadJoke: UploadJoke):
+    joke = await db.save_document(uploadJoke)
+    return joke
 
 

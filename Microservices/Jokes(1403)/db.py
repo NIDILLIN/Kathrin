@@ -1,8 +1,9 @@
+import datetime
 from bson.objectid import ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from config import settings
-from models import JokePackage
+from models import UploadJoke
 
 
 
@@ -42,16 +43,16 @@ class DB:
         document['id'] = str(document.pop('_id'))
         return document
 
-    async def save_document(self, jokePackage: JokePackage) -> str:
-        document = jokePackage.dict()
-        document['date'] = document['date'].isoformat()
-        document['uploaded_by']['registration_date'] = document['uploaded_by']['registration_date'].isoformat()
+    async def save_document(self, joke: UploadJoke) -> str:
+        document = joke.dict()
+        document['created_at'] = datetime.date.today().strftime('%Y-%m-%d')
+        document['uploaded_by']['registration_date'] = document['uploaded_by']['registration_date'].strftime('%Y-%m-%d')
         
         r = await self.collection.insert_one(
             document
         )
-        id = str(r.inserted_id)
-        return id
+        document['id'] = str(document.pop('_id'))
+        return document
 
 
 
